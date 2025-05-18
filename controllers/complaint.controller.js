@@ -3,8 +3,10 @@ const { generateTicketId } = require("../utils/generateTicketId.util");
 
 exports.createComplaint = async (req, res) => {
   try {
-    let complaint = await Complaint.create(req.body);
-    complaint.ticketId = generateTicketId();
+    let complaint = await Complaint.create({
+      ...req.body,
+      ticketId: generateTicketId(),
+    });
     res.status(201).json(complaint);
   } catch (error) {
     res.status(500).json({ message: "Error creating complaint", error });
