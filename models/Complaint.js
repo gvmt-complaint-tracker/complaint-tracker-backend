@@ -5,6 +5,11 @@ const ComplaintSchema = new mongoose.Schema({
   email: String,
   category: String,
   description: String,
+  ticketId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   status: {
     type: String,
     default: "Pending",

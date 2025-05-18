@@ -1,8 +1,10 @@
 const Complaint = require("../models/Complaint");
+const { generateTicketId } = require("../utils/generateTicketId.util");
 
 exports.createComplaint = async (req, res) => {
   try {
-    const complaint = await Complaint.create(req.body);
+    let complaint = await Complaint.create(req.body);
+    complaint.ticketId = generateTicketId();
     res.status(201).json(complaint);
   } catch (error) {
     res.status(500).json({ message: "Error creating complaint", error });
@@ -43,16 +45,26 @@ exports.updateComplaint = async (req, res) => {
 };
 
 exports.queryComplaints = async (req, res) => {
-  const { query } = req.query;
-  if (!query) {
-    return res.status(400).json({ message: "Query parameter is required." });
-  }
+  const { email, ticketId } = req.body;
 
   try {
-    const complaints = await Complaint.find({
-      $or: [{ _id: query }, { email: query }],
+    let complaint;
+    if (ticketId) {
+      complaint = await Complaint.findOne({ ticketId });
+    } else if (email) {
+      complaint = await Complaint.findOne({ email });
+    }
+
+    if (!complaint) {
+      return res.status(404).json({ message: "Complaint not found" });
+    }
+
+    res.json({
+      ticketId: complaint.ticketId,
+      status: complaint.status,
+      category: complaint.category,
+      description: complaint.description,
     });
-    res.json(complaints);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }

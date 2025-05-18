@@ -11,8 +11,8 @@ const router = express.Router();
 
 router.post("/", createComplaint);
 router.get("/", getAllComplaints);
+router.post("/status", queryComplaints);
 router.get("/:id", getComplaintById);
 router.put("/:id", updateComplaint);
-router.get("/status", queryComplaints);
 
 module.exports = router;
